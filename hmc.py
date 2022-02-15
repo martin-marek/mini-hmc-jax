@@ -4,10 +4,15 @@ from jax.flatten_util import ravel_pytree
 
 
 def ifelse(cond, val_true, val_false):
+    """If `cond`, returns `val_true`, otherwise returns `val_false`."""
     return jax.lax.cond(cond, lambda x: x[0], lambda x: x[1], (val_true, val_false))
 
 
 def normal_like_tree(a, key):
+    """
+    Returns a tree of given structure, where each number is
+    sampled from a standard normal distribution.
+    """
     treedef = jax.tree_structure(a)
     num_vars = len(jax.tree_leaves(a))
     all_keys = jax.random.split(key, num=(num_vars + 1))
@@ -16,7 +21,8 @@ def normal_like_tree(a, key):
 
 
 def leapfrog(params, momentum, log_prob_fn, step_size, n_steps):
-    
+    """Approximates Hamiltonion dynamics using the leapfrog algorithm."""
+
     # define a single step
     def step(i, args):
         params, momentum = args
@@ -41,6 +47,11 @@ def leapfrog(params, momentum, log_prob_fn, step_size, n_steps):
 
 
 def hmc_sampler(params, log_prob_fn, n_steps, n_leapfrog_steps, step_size, key):
+    """
+    Runs HMC and returns the full Markov chain as a list.
+    `params` can be an arbitrary tree-like structure, e.g. a dict of NN parameters.
+    `log_prob_fn` must be a function that takes params as the only argument and returns a scalar.
+    """
 
     # define a single step
     def step(i, args):
@@ -69,13 +80,18 @@ def hmc_sampler(params, log_prob_fn, n_steps, n_leapfrog_steps, step_size, key):
         return params, params_history, total_accept_prob, key
     
     # ravel params
+    # - params are reshaped from a pytree to a 1d array
+    # - this is required to run HMC in a lax for loop
     params_raveled, unravel_fn = ravel_pytree(params)
     
     # do 'n_steps'
-    params_history_raveled = jnp.zeros([n_steps]+list(params_raveled.shape))
+    # - `params` is a pytree of the current parameters
+    # - `params_history_raveled` is the output chain represented as a 2d array
+    params_history_raveled = jnp.zeros([n_steps, len(params_raveled)])
     _, params_history_raveled, total_accept_prob, key = jax.lax.fori_loop(0, n_steps, step, (params, params_history_raveled, 0, key))
     
     # unravel params
+    # - the output chain is converted from a 2d array to a list of pytrees
     params_history_unraveled = [unravel_fn(params_raveled) for params_raveled in params_history_raveled]
     
     print(f'Avg. accept. prob.: {(total_accept_prob/n_steps):.2%}')
