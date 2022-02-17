@@ -19,7 +19,7 @@ key = jax.random.PRNGKey(0)
 chain = hmc_sampler(params_init, target_log_pdf, n_steps=10, n_leapfrog_steps=100, step_size=0.1, key=key)
 ```
 
-Inspired by the paper [What Are Bayesian Neural Network Posteriors Really Like?](https://github.com/google-research/google-research/tree/master/bnn_hmc)
+Based on the [official repository](https://github.com/google-research/google-research/tree/master/bnn_hmc) for the paper [_What Are Bayesian Neural Network Posteriors Really Like?_](https://arxiv.org/abs/2104.14421)
 
 ```bibtex
 @article{izmailov2021bayesian,
