@@ -31,8 +31,8 @@ def leapfrog(params, momentum, log_prob_fn, step_size, n_steps):
 def hmc_sampler(params, log_prob_fn, n_steps, n_leapfrog_steps, step_size, key):
     """
     Runs HMC and returns the full Markov chain as a list.
-    `params` can be an arbitrary tree-like structure, e.g. a dict of NN parameters.
-    `log_prob_fn` must be a function that takes params as the only argument and returns a scalar value.
+    - params: array
+    - log_prob_fn: function that takes params as the only argument and returns a scalar value
     """
 
     # define a single step
