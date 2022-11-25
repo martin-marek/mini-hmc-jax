@@ -1,6 +1,6 @@
 # mini-hmc-jax 
 
-This is a simple implementation of Hamiltonian Monte Carlo in JAX that is vectorized and supports pytree parameters (i.e. tree-like structures).
+This is a simple vectorized implementation of Hamiltonian Monte Carlo in JAX.
 
 Here's a minimal example to sample from a distribution:
 
