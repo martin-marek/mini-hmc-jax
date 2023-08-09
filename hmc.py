@@ -50,6 +50,7 @@ def hmc_sampler(params, log_prob_fn, n_steps, n_leapfrog_steps, step_size, key):
         potentaial_energy_diff = log_prob_fn(new_params) - log_prob_fn(params)
         kinetic_energy_diff = 0.5*(momentum**2 - new_momentum**2).sum()
         log_accept_prob = potentaial_energy_diff + kinetic_energy_diff
+        log_accept_prob = jnp.nan_to_num(log_accept_prob, nan=-jnp.inf)
         accept_prob = jnp.minimum(1, jnp.exp(log_accept_prob))
         total_accept_prob += accept_prob
         accept = jax.random.uniform(uniform_key) < accept_prob
