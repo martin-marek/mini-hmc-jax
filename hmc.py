@@ -28,7 +28,7 @@ def leapfrog(params, momentum, log_prob_fn, step_size, n_steps):
     return new_params, new_momentum
 
 
-def hmc_sampler(params, log_prob_fn, n_steps, n_leapfrog_steps, step_size, key):
+def sample(params, log_prob_fn, n_steps, n_leapfrog_steps, step_size, key):
     """
     Runs HMC and returns the full Markov chain as a list.
     - params: array
